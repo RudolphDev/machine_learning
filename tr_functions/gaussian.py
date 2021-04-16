@@ -9,7 +9,7 @@ from tr_functions.general import *
 
 class GaussianModel(GeneralModel):
     def __init__(self):
-        self._compute_method = None
+        self._compute_method = "euclidean"
         self._inv_covmat = None
         self._classes_centers = {}
         GeneralModel.__init__(self)
@@ -35,9 +35,9 @@ class GaussianModel(GeneralModel):
             print("Class = {} has a center = {}".format(key, value))
 
     def gaussian_fit_model(self, data):
-        self.get_unique_class_num()
         self._train_data = data
-        for class_num in classes:
+        self.get_unique_class_num()
+        for class_num in self._unique_classes:
             data_class = get_splited_class(data, int(class_num))
             sum_x = 0
             sum_y = 0
@@ -86,7 +86,7 @@ class GaussianModel(GeneralModel):
                 self._count_top1 += 1
             if get_top_n_decision(2, line[0], dists):
                 self._count_top2 += 1
-            update_confusion_matrix(self._conf_matrix, line[0], dists)
+            self.update_confusion_matrix(line[0], dists)
         df = transform_matrix_to_df(self._conf_matrix, self._unique_classes)
 
     def _compute_one_mahalanobis_dist(self, first_point, second_point):
