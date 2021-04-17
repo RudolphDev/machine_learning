@@ -93,7 +93,8 @@ class GeneralModel:
         print("----------------")
         print("\nConfusion matrix :")
         print("----------------")
-        print(tabulate(self._conf_matrix, headers='keys', tablefmt='fancy_grid'))
+        pd_cf = pd.DataFrame(self._conf_matrix, index=self._unique_classes, columns=self._unique_classes, dtype=int)
+        print(tabulate(pd_cf, headers='keys', tablefmt='fancy_grid'))
         print("----------------")
 
     def show_train_plot(self):

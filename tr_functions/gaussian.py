@@ -89,8 +89,8 @@ class GaussianModel(GeneralModel):
             if self._get_top_n_decision(2, line[0], dists):
                 self._count_top2 += 1
             self._update_confusion_matrix(int(line[0]), dists)
-        # df = transform_matrix_to_df(self._conf_matrix, self._unique_classes)
-
+       
+       
     def _compute_one_mahalanobis_dist(self, first_point: list, second_point: list):
         x_minus_mu = []
         for i in range(0, len(first_point)):
