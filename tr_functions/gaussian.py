@@ -1,10 +1,12 @@
 # General import
+import math
 import numpy as np
 import pandas as pd
 from scipy import linalg
+import matplotlib.pyplot as plt
 
 # local functions import
-from tr_functions.general import *
+from tr_functions.general import GeneralModel
 
 
 class GaussianModel(GeneralModel):
@@ -36,9 +38,9 @@ class GaussianModel(GeneralModel):
 
     def gaussian_fit_model(self, data):
         self._train_data = data
-        self.get_unique_class_num()
+        self._compute_unique_class_num()
         for class_num in self._unique_classes:
-            data_class = get_splited_class(data, int(class_num))
+            data_class = self._get_splited_class(int(class_num))
             sum_x = 0
             sum_y = 0
             for line in data_class:
@@ -82,14 +84,14 @@ class GaussianModel(GeneralModel):
                 dists = self._compute_mahalanobis_dists(line)
             else:
                 dists = self._compute_euclidian_dists(line)
-            if get_top_n_decision(1, line[0], dists):
+            if self._get_top_n_decision(1, line[0], dists):
                 self._count_top1 += 1
-            if get_top_n_decision(2, line[0], dists):
+            if self._get_top_n_decision(2, line[0], dists):
                 self._count_top2 += 1
-            self.update_confusion_matrix(line[0], dists)
-        df = transform_matrix_to_df(self._conf_matrix, self._unique_classes)
+            self._update_confusion_matrix(int(line[0]), dists)
+        # df = transform_matrix_to_df(self._conf_matrix, self._unique_classes)
 
-    def _compute_one_mahalanobis_dist(self, first_point, second_point):
+    def _compute_one_mahalanobis_dist(self, first_point: list, second_point: list):
         x_minus_mu = []
         for i in range(0, len(first_point)):
             x_minus_mu.append(float(first_point[i]) - second_point[i])
@@ -97,3 +99,10 @@ class GaussianModel(GeneralModel):
         left_term = np.dot(x_minus_mu, self._inv_covmat)
         mahal = np.dot(left_term, x_minus_mu.T)
         return math.sqrt(mahal)
+
+    def show_train_plot(self):
+        self._add_train_point_to_plot()
+        pd_centers = pd.DataFrame(self._classes_centers)
+        scatter = plt.scatter(x=pd.to_numeric(pd_centers.T[0]), y=pd.to_numeric(
+            pd_centers.T[1]), c="black", marker="+", s=100)
+        plt.show()
