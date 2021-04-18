@@ -4,6 +4,7 @@ import pandas as pd
 from tabulate import tabulate
 from collections import Counter
 import matplotlib.pyplot as plt
+import math
 
 
 class GeneralModel:
@@ -16,6 +17,7 @@ class GeneralModel:
         self._train_data = []
         self._count_top1 = 0
         self._count_top2 = 0
+        self._error_count = 0
         self._conf_matrix = []
         self._len_test_data = 0
         self._unique_classes = []
@@ -89,7 +91,8 @@ class GeneralModel:
         print("\nTop results :")
         print("----------------")
         print("Top 1 rate : ", self._count_top1/self._len_test_data)
-        print("Top 2 rate : ", self._count_top2/self._len_test_data)
+        if self._count_top2 != 0:
+            print("Top 2 rate : ", self._count_top2/self._len_test_data)
         print("----------------")
         print("\nConfusion matrix :")
         print("----------------")
