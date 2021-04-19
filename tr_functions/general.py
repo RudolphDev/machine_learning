@@ -15,11 +15,11 @@ class GeneralModel:
         """Create the Model with all these attributes
         """
         self._train_data = []
+        self._test_data = []
         self._count_top1 = 0
         self._count_top2 = 0
         self._error_count = 0
         self._conf_matrix = []
-        self._len_test_data = 0
         self._unique_classes = []
 
     # Getter and setter
@@ -59,8 +59,8 @@ class GeneralModel:
         return self._conf_matrix
 
     @property
-    def len_test_data(self):
-        return self._len_test_data
+    def test_data(self):
+        return pd.DataFrame(self._test_data)
 
     # Public methods
     @staticmethod
@@ -86,13 +86,13 @@ class GeneralModel:
         print("Results :")
         print("----------------")
         print("Number of elements for the learning step : ", len(self._train_data))
-        print("Number of elements for the decision step : ", self._len_test_data)
+        print("Number of elements for the decision step : ", len(self._test_data))
         print("----------------")
         print("\nTop results :")
         print("----------------")
-        print("Top 1 rate : ", self._count_top1/self._len_test_data)
+        print("Top 1 rate : ", self._count_top1/len(self._test_data))
         if self._count_top2 != 0:
-            print("Top 2 rate : ", self._count_top2/self._len_test_data)
+            print("Top 2 rate : ", self._count_top2/len(self._test_data))
         print("----------------")
         print("\nConfusion matrix :")
         print("----------------")
@@ -106,6 +106,25 @@ class GeneralModel:
         self.__add_train_point_to_plot()
         plt.show()
 
+    def plot_all_data(self):
+        pd_train = pd.DataFrame(self._train_data)
+        pd_test = pd.DataFrame(self._test_data)
+        
+        scatter = plt.scatter(x=pd.to_numeric(pd_train[1]), y=pd.to_numeric(
+            pd_train[2]), c=pd.to_numeric(pd_train[0]), marker="+")
+        scatter2 = plt.scatter(x=pd.to_numeric(pd_test[1]), y=pd.to_numeric(
+            pd_test[2]), c=pd.to_numeric(pd_test[0]), marker="o")
+        plt.legend(*scatter.legend_elements(), loc="lower right")
+        plt.legend(*scatter2.legend_elements(), loc="lower left")
+        plt.show()
+        
+    def plot_test_data(self):
+        pd_test = pd.DataFrame(self._train_data)
+        scatter = plt.scatter(x=pd.to_numeric(pd_test[1]), y=pd.to_numeric(
+            pd_test[2]), c=pd.to_numeric(pd_test[0]))
+        plt.legend(*scatter.legend_elements(), loc="lower right")
+        plt.show()
+        
     def print_conf_matrix(self):
         """ Print the confusion matrix with real classes as rows and found classes as columns
         """

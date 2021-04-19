@@ -1,6 +1,7 @@
 # local functions import
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from collections import Counter
 from tr_functions.general import GeneralModel
 
@@ -44,12 +45,17 @@ class KppvModel(GeneralModel):
             self.__vote_method = value
         else:
             print("Accepted methods are \"unanimous\" and \"majority\"")        
-        
+
+    def print_k_results_cv(self):
+        print("Cross Validation results:")
+        for k in self.__k_results_cv:
+            print("For k = {} the error rate is {}".format(k[0], round(1-k[1], 3)))
+    
     #Public methods
     def compute_kppv(self, app_data:list, dec_data:list):
         print("Will use k = {} neighbours".format(self.__k))
         self._train_data = app_data
-        self._len_test_data = len(dec_data)
+        self._test_data = dec_data
         self._compute_unique_class_num()
         self._conf_matrix = np.zeros((len(self._unique_classes), len(self._unique_classes)))
         
@@ -91,7 +97,7 @@ class KppvModel(GeneralModel):
                 best_k[0] = self.__k
                 best_k[1] = sum_error/self.__cross_val
         self.__plot_k_error_rate()
-        print("The best k found is {} with a error rate = {}".format(best_k[0], best_k[1]))
+        print("The best k found is {} with a error rate = {}".format(best_k[0], 1-best_k[1]))
         self.k = best_k[0]
 
     #Private methods 
@@ -168,7 +174,10 @@ class KppvModel(GeneralModel):
             self._error_count += 1
      
     def __plot_k_error_rate(self):
-        print("TODO")
+        x = [val[0] for val in self.__k_results_cv]
+        y = [1-val[1] for val in self.__k_results_cv]
+        plt.plot(x,y)
+        plt.show()
         print(self.__k_results_cv)
 
 
