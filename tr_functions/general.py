@@ -156,7 +156,7 @@ class GeneralModel:
             class_num.append(line[0])
         self._unique_classes = np.unique(class_num)
 
-    def _update_confusion_matrix(self, line_class:int, scores_dict:dict):
+    def _update_confusion_matrix(self, line_class:int, scores_dict:dict, order:str = "min"):
         """Add one to the right coordinate of the confusion matrix. The coordinates are the line class number and the best score in dict
 
         Args:
@@ -164,7 +164,10 @@ class GeneralModel:
             scores_dict (dict): dictonary with class numbers as key and score as value
         """        
         row_num = line_class - 1
-        temp = min(scores_dict.values())
+        if order == "min":
+            temp = min(scores_dict.values())
+        else:
+            temp = max(scores_dict.values())
         res = [key for key in scores_dict if scores_dict[key] == temp]
         col_num = int(res[0]) - 1
         self._conf_matrix[row_num,
@@ -194,18 +197,22 @@ class GeneralModel:
         return data_class
 
     @staticmethod
-    def _get_top_n_decision(n:int, theo_class:int, scores:dict):
+    def _get_top_n_decision(n:int, theo_class:int, scores:dict, order:str = "max"):
         """Check if the theorical class is in the N best results of the dictonary
 
         Args:
             n (int): number of scores to check
             theo_class (int): theorical class to fit
             scores (dict): dictionnary of classes as keys and scores as values
+            order (str): must min or max, indicates if the best score is the minimum or the maximum one
 
         Returns:
             bool: True if the theorical class is in the nth scores
-        """        
-        scores_sorted = sorted(scores.items(), key=lambda kv: kv[1])
+        """    
+        if order == "min":    
+            scores_sorted = sorted(scores.items(), key=lambda kv: kv[1])
+        else:
+            scores_sorted = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)
         cut_scores = scores_sorted[0:n]
         top_n_result = False
         for score in cut_scores:

@@ -84,9 +84,9 @@ class GaussianModel(GeneralModel):
                 dists = self._compute_mahalanobis_dists(line)
             else:
                 dists = self._compute_euclidian_dists(line)
-            if self._get_top_n_decision(1, line[0], dists):
+            if self._get_top_n_decision(1, line[0], dists, "min"):
                 self._count_top1 += 1
-            if self._get_top_n_decision(2, line[0], dists):
+            if self._get_top_n_decision(2, line[0], dists, "min"):
                 self._count_top2 += 1
             self._update_confusion_matrix(int(line[0]), dists)
        
