@@ -50,11 +50,12 @@ class GaussianModel(GeneralModel):
             y_center = 1/len(data_class) * sum_y
             self._classes_centers[class_num] = [x_center, y_center]
         print("Classes centers created")
+        return self._classes_centers
 
     def _compute_euclidian_dists(self, line):
         dists_dict = {}
         for class_center in self._classes_centers:
-            dist = GaussianModel.compute_one_euclidian_dist(
+            dist = self._compute_one_euclidian_dist(
                 self._classes_centers[class_center], line[1:3])
             dists_dict[class_center] = dist
         return dists_dict
@@ -76,7 +77,7 @@ class GaussianModel(GeneralModel):
     def test_model(self, dec_data):
         if self._compute_method == "mahalanobis":
             self._compute_inv_covmat(dec_data)
-        self._len_test_data = len(dec_data)
+        self._test_data = dec_data
         self._conf_matrix = np.zeros(
             (len(self._unique_classes), len(self._unique_classes)))
         for line in dec_data:
@@ -84,9 +85,9 @@ class GaussianModel(GeneralModel):
                 dists = self._compute_mahalanobis_dists(line)
             else:
                 dists = self._compute_euclidian_dists(line)
-            if self._get_top_n_decision(1, line[0], dists, "min"):
+            if self._get_top_n_decision(1, int(line[0]), dists, "min"):
                 self._count_top1 += 1
-            if self._get_top_n_decision(2, line[0], dists, "min"):
+            if self._get_top_n_decision(2, int(line[0]), dists, "min"):
                 self._count_top2 += 1
             self._update_confusion_matrix(int(line[0]), dists)
        

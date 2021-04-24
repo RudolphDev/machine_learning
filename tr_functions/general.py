@@ -32,6 +32,10 @@ class GeneralModel:
         """
         return pd.DataFrame(self._train_data)
 
+    @train_data.setter
+    def train_data(self, train_data):
+        self._train_data = train_data
+    
     @property
     def count_top1(self):
         """Return the number of classes right labeled
@@ -47,7 +51,6 @@ class GeneralModel:
 
     @property
     def count_top2(self):
-
         return self._count_top2
 
     @count_top2.setter
@@ -62,6 +65,10 @@ class GeneralModel:
     def test_data(self):
         return pd.DataFrame(self._test_data)
 
+    @test_data.setter
+    def test_data(self, test_data):
+        self._test_data = test_data
+    
     # Public methods
     @staticmethod
     def open_file(filename: str):
@@ -100,10 +107,10 @@ class GeneralModel:
         print(tabulate(pd_cf, headers='keys', tablefmt='fancy_grid'))
         print("----------------")
 
-    def show_train_plot(self):
+    def plot_train_data(self):
         """Plot the dataset used for the training
         """
-        self.__add_train_point_to_plot()
+        self._add_train_point_to_plot()
         plt.show()
 
     def plot_all_data(self):
@@ -111,18 +118,15 @@ class GeneralModel:
         pd_test = pd.DataFrame(self._test_data)
         
         scatter = plt.scatter(x=pd.to_numeric(pd_train[1]), y=pd.to_numeric(
-            pd_train[2]), c=pd.to_numeric(pd_train[0]), marker="+")
+            pd_train[2]), c=pd.to_numeric(pd_train[0]), marker="+", alpha=0.5)
         scatter2 = plt.scatter(x=pd.to_numeric(pd_test[1]), y=pd.to_numeric(
-            pd_test[2]), c=pd.to_numeric(pd_test[0]), marker="o")
+            pd_test[2]), c=pd.to_numeric(pd_test[0]), marker=".")
         plt.legend(*scatter.legend_elements(), loc="lower right")
-        plt.legend(*scatter2.legend_elements(), loc="lower left")
+        plt.legend(*scatter2.legend_elements(), loc="lower left", title="test")
         plt.show()
         
     def plot_test_data(self):
-        pd_test = pd.DataFrame(self._train_data)
-        scatter = plt.scatter(x=pd.to_numeric(pd_test[1]), y=pd.to_numeric(
-            pd_test[2]), c=pd.to_numeric(pd_test[0]))
-        plt.legend(*scatter.legend_elements(), loc="lower right")
+        self._add_test_point_to_plot()
         plt.show()
         
     def print_conf_matrix(self):
@@ -181,6 +185,14 @@ class GeneralModel:
             pd_train[2]), c=pd.to_numeric(pd_train[0]))
         plt.legend(*scatter.legend_elements(), loc="lower right")
 
+    def _add_test_point_to_plot(self):
+        """Add test dataset points to the scatter plot
+        """        
+        pd_test = pd.DataFrame(self._test_data)
+        scatter = plt.scatter(x=pd.to_numeric(pd_test[1]), y=pd.to_numeric(
+            pd_test[2]), c=pd.to_numeric(pd_test[0]))
+        plt.legend(*scatter.legend_elements(), loc="lower right")
+
     def _get_splited_class(self, class_num:int):
         """Get the data from the given class number
 
@@ -216,12 +228,6 @@ class GeneralModel:
         cut_scores = scores_sorted[0:n]
         top_n_result = False
         for score in cut_scores:
-            if theo_class == score[0]:
+            if theo_class == int(score[0]):
                 top_n_result = True
         return top_n_result
-
-    # def _get_n_max_occurence_from_list(classes_list: list, n_max: int = 1):
-    #     counted_list = list(Counter(classes_list).items())
-    #     counted_list.sort(key=lambda a: a[1], reverse=True)
-    #     result = counted_list[n_max-1][0]
-    #     return result
