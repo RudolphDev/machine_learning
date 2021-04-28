@@ -21,7 +21,6 @@ class KppvModel(GeneralModel):
     
     @k.setter
     def k(self, value:int):
-        print("K set to {}".format(value))
         self.__k = value
     
     @property
@@ -177,8 +176,8 @@ class KppvModel(GeneralModel):
         x = [val[0] for val in self.__k_results_cv]
         y = [1-val[1] for val in self.__k_results_cv]
         plt.plot(x,y)
+        plt.title("error rate for each k tested with cross-validation")
         plt.show()
-        print(self.__k_results_cv)
 
 
    

@@ -21,6 +21,7 @@ class GeneralModel:
         self._error_count = 0
         self._conf_matrix = []
         self._unique_classes = []
+        self._COLORSET = {1:'#1f77b4', 2:'#ff7f0e', 3:'#2ca02c', 4:'#d62728', 5:'#9467bd'}
 
     # Getter and setter
     @property
@@ -92,9 +93,6 @@ class GeneralModel:
         """
         print("Results :")
         print("----------------")
-        print("Number of elements for the learning step : ", len(self._train_data))
-        print("Number of elements for the decision step : ", len(self._test_data))
-        print("----------------")
         print("\nTop results :")
         print("----------------")
         print("Top 1 rate : ", self._count_top1/len(self._test_data))
@@ -114,15 +112,15 @@ class GeneralModel:
         plt.show()
 
     def plot_all_data(self):
-        pd_train = pd.DataFrame(self._train_data)
-        pd_test = pd.DataFrame(self._test_data)
-        
-        scatter = plt.scatter(x=pd.to_numeric(pd_train[1]), y=pd.to_numeric(
-            pd_train[2]), c=pd.to_numeric(pd_train[0]), marker="+", alpha=0.5)
-        scatter2 = plt.scatter(x=pd.to_numeric(pd_test[1]), y=pd.to_numeric(
-            pd_test[2]), c=pd.to_numeric(pd_test[0]), marker=".")
-        plt.legend(*scatter.legend_elements(), loc="lower right")
-        plt.legend(*scatter2.legend_elements(), loc="lower left", title="test")
+        np_train = np.array(self._train_data)
+        np_test = np.array(self.test_data)
+        fig, ax = plt.subplots()
+        for class_nb in np.unique(np_train[:,0].astype(np.int)):
+            idx_train = np.where(np_train[:,0].astype(np.int) == class_nb)
+            idx_test = np.where(np_test[:,0].astype(np.int) == class_nb)
+            ax.scatter(x=np_train[idx_train,1].astype(np.float), y=np_train[idx_train,2].astype(np.float), c=self._COLORSET[class_nb], alpha=0.5, marker="+")
+            ax.scatter(x=np_test[idx_test,1].astype(np.float), y=np_test[idx_test,2].astype(np.float), c=self._COLORSET[class_nb], label=class_nb, marker=".")
+        ax.legend()
         plt.show()
         
     def plot_test_data(self):
@@ -149,7 +147,7 @@ class GeneralModel:
         """        
         sum_square = 0
         for i in range(0, len(first_point)):
-            sum_square = (float(first_point[i]) - float(second_point[i]))**2
+            sum_square += (float(first_point[i]) - float(second_point[i]))**2
         return math.sqrt(sum_square)
 
     def _compute_unique_class_num(self):
@@ -180,18 +178,25 @@ class GeneralModel:
     def _add_train_point_to_plot(self):
         """Add trainig dataset points to the scatter plot
         """        
-        pd_train = pd.DataFrame(self._train_data)
-        scatter = plt.scatter(x=pd.to_numeric(pd_train[1]), y=pd.to_numeric(
-            pd_train[2]), c=pd.to_numeric(pd_train[0]))
-        plt.legend(*scatter.legend_elements(), loc="lower right")
+        np_train = np.array(self._train_data)
+        fig, ax = plt.subplots()
+        for class_nb in np.unique(np_train[:,0].astype(np.int)):
+            idx = np.where(np_train[:,0].astype(np.int) == class_nb)
+            ax.scatter(x=np_train[idx,1].astype(np.float), y=np_train[idx,2].astype(np.float), c=self._COLORSET[class_nb], label=class_nb)
+        ax.legend()
 
     def _add_test_point_to_plot(self):
         """Add test dataset points to the scatter plot
         """        
-        pd_test = pd.DataFrame(self._test_data)
-        scatter = plt.scatter(x=pd.to_numeric(pd_test[1]), y=pd.to_numeric(
-            pd_test[2]), c=pd.to_numeric(pd_test[0]))
-        plt.legend(*scatter.legend_elements(), loc="lower right")
+        np_test = np.array(self._test_data)
+        fig, ax = plt.subplots()
+        for class_nb in np.unique(np_test[:,0].astype(np.int)):
+            idx = np.where(np_test[:,0].astype(np.int) == class_nb)
+            e_c = []
+            for i in np_test[idx[0],3]:
+               e_c.append(self._COLORSET[int(i)]) 
+            ax.scatter(x=np_test[idx,1].astype(np.float), y=np_test[idx,2].astype(np.float), edgecolors=self._COLORSET[class_nb], c=e_c, label=class_nb)
+        ax.legend()
 
     def _get_splited_class(self, class_num:int):
         """Get the data from the given class number
@@ -231,3 +236,12 @@ class GeneralModel:
             if theo_class == int(score[0]):
                 top_n_result = True
         return top_n_result
+
+    def _update_line(self, line, scores_dict, order="max"):
+        if order == "min":
+            temp = min(scores_dict.values())
+        else:
+            temp = max(scores_dict.values())
+        res = [key for key in scores_dict if scores_dict[key] == temp]
+        line.append(res[0])
+        
