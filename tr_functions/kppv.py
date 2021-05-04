@@ -62,9 +62,11 @@ class KppvModel(GeneralModel):
             kppv_list = self.__get_kppv_list(line[1:])
             k_list = list(Counter(kppv_list[0]).items())
             self.__compute_vote_kppv(k_list, int(line[0]))
-        #     # Conf matrix
+            k_list.sort(key=lambda a: a[1], reverse=True)
+            # Conf matrix
             row_num = int(line[0]) - 1
             col_num = int(k_list[0][0]) -1
+            line.append(k_list[0][0])
             self._conf_matrix[row_num, col_num] = self._conf_matrix[row_num, col_num] + 1
     
     def get_k_cross_validation(self,app_data, k_max, cv):

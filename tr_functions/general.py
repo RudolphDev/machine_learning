@@ -98,6 +98,8 @@ class GeneralModel:
         print("Top 1 rate : ", self._count_top1/len(self._test_data))
         if self._count_top2 != 0:
             print("Top 2 rate : ", self._count_top2/len(self._test_data))
+        if self._error_count != 0:
+            print("Error rate : ", self._error_count/len(self._test_data))
         print("----------------")
         print("\nConfusion matrix :")
         print("----------------")
