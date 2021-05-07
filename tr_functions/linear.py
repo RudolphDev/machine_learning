@@ -68,11 +68,12 @@ class LinearSeparationModel(GeneralModel):
         self._test_data = test_data
         self._conf_matrix = np.zeros(
             (len(self._unique_classes), len(self._unique_classes)))
+        
         for line in self._test_data:
-            line = [float(val) for val in line]
+            temp_line = [float(val) for val in line]
             predict_classes = []
             for key, value in weighted_hp.items():
-                res = self.__predict_one_line_perceptron(line[1:], value)
+                res = self.__predict_one_line_perceptron(temp_line[1:], value)
                 if res >= 0:
                     predict_classes.append(key[0])
                 else:
@@ -81,19 +82,33 @@ class LinearSeparationModel(GeneralModel):
             if self._get_top_n_decision(1, int(line[0]), grouped_classes):
                 self.count_top1 += 1
             if self._get_top_n_decision(2, int(line[0]), grouped_classes):
-                self.count_top2 += 1
+                self.count_top2 += 1          
+            self._update_line(line, grouped_classes, "max")
             self._update_confusion_matrix(
                 int(line[0]), grouped_classes, order="max")
 
     def plot_test_data(self):
-        self._add_test_point_to_plot()
+        # self._add_test_point_to_plot()
+        x = np.linspace(start = -1,  stop = 1, num=10)
+        np_test = np.array(self._test_data)
+        fig, ax = plt.subplots()
         for key, value in self.__model.items():
             print(value)
+            for class_nb in key:
+                print(class_nb)
+                idx = np.where(np_test[:,0].astype(np.int) == int(class_nb))
+                print(idx)
+                e_c = []
+                for i in np_test[idx[0],3]:
+                    e_c.append(self._COLORSET[int(i)]) 
+                ax.scatter(x=np_test[idx,1].astype(np.float), y=np_test[idx,2].astype(np.float), edgecolors=self._COLORSET[int(class_nb)], c=e_c, label=class_nb)
+            ax.legend()
+
             
-            x = np.linspace(-10.,10.)
             y_h = (value[0]*x+value[2])/(-value[1])
-            print(y_h)
+            # print(y_h)
             plt.plot(y_h, linewidth=2.5)
+            break
             
         plt.show()
 
@@ -122,6 +137,7 @@ class LinearSeparationModel(GeneralModel):
     def __predict_one_line_perceptron(line, weights):
         total = 0
         for i in range(len(line)):
+            # print(i, len(line))
             total += line[i] * weights[i]
         total += weights[-1]
         return total

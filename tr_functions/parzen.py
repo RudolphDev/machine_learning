@@ -52,10 +52,11 @@ class ParzenModel(GeneralModel):
                 results = self.__get_dict_gaussian_value(line[1:])
             else:
                 results = self.__get_dict_uniform_value(line[1:])
-            if self._get_top_n_decision(1, line[0], results, "max"):
+            if self._get_top_n_decision(1, int(line[0]), results, "max"):
                 self._count_top1 +=1
-            if self._get_top_n_decision(2, line[0], results, "max"):
+            if self._get_top_n_decision(2, int(line[0]), results, "max"):
                 self._count_top2 += 1
+            self._update_line(line, results, "max")
             self._update_confusion_matrix(int(line[0]), results, "max")
     
     def get_h_cross_validation(self, app_data, h_list, cv,):
@@ -80,7 +81,7 @@ class ParzenModel(GeneralModel):
                         results = self.__get_dict_uniform_value(line[1:], df_train)
                     elif self.__method == "gaussian":
                         results = self.__get_dict_gaussian_value(line[1:], df_train)
-                    if self._get_top_n_decision(1, line[0], results, "max"):
+                    if self._get_top_n_decision(1, int(line[0]), results, "max"):
                         count_top_1 = count_top_1 + 1
                 error_rate = count_top_1/len(df_cv)
                 sum_error = sum_error + error_rate
@@ -115,7 +116,7 @@ class ParzenModel(GeneralModel):
 
     def __get_dict_gaussian_value(self, point, train_data=None):
         if train_data is None:
-            train_data = self.__train_data
+            train_data = self._train_data
         result_dict = {}
         COUNT_CLASS = 100
         for one_class in self._unique_classes:
@@ -138,4 +139,3 @@ class ParzenModel(GeneralModel):
         y = [1-val[1] for val in self.__h_results_cv]
         plt.plot(x,y)
         plt.show()
-        print(self.__h_results_cv)
