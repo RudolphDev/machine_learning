@@ -88,28 +88,22 @@ class LinearSeparationModel(GeneralModel):
                 int(line[0]), grouped_classes, order="max")
 
     def plot_test_data(self):
-        # self._add_test_point_to_plot()
         x = np.linspace(start = -1,  stop = 1, num=10)
         np_test = np.array(self._test_data)
-        fig, ax = plt.subplots()
+        plot_count = 1
         for key, value in self.__model.items():
-            print(value)
+            plt.subplot(5,2,plot_count)
             for class_nb in key:
-                print(class_nb)
                 idx = np.where(np_test[:,0].astype(np.int) == int(class_nb))
-                print(idx)
                 e_c = []
                 for i in np_test[idx[0],3]:
                     e_c.append(self._COLORSET[int(i)]) 
-                ax.scatter(x=np_test[idx,1].astype(np.float), y=np_test[idx,2].astype(np.float), edgecolors=self._COLORSET[int(class_nb)], c=e_c, label=class_nb)
-            ax.legend()
-
-            
+                plt.scatter(x=np_test[idx,1].astype(np.float), y=np_test[idx,2].astype(np.float), edgecolors=self._COLORSET[int(class_nb)], c=e_c, label=class_nb)
+            plt.legend()
+            plot_count += 1
             y_h = (value[0]*x+value[2])/(-value[1])
-            # print(y_h)
-            plt.plot(y_h, linewidth=2.5)
-            break
-            
+            plt.plot(x, y_h, linewidth=2.5)
+            # break  
         plt.show()
 
     def __create_hyperplans_classes(self):
