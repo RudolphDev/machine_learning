@@ -205,7 +205,10 @@ class GeneralModel:
             idx = np.where(np_test[:,0].astype(np.int) == class_nb)
             e_c = []
             for i in np_test[idx[0],3]:
-               e_c.append(self._COLORSET[int(i)]) 
+                if i != None:
+                    e_c.append(self._COLORSET[int(i)]) 
+                else:
+                    e_c.append("#000000")
             ax.scatter(x=np_test[idx,1].astype(np.float), y=np_test[idx,2].astype(np.float), edgecolors=self._COLORSET[class_nb], c=e_c, label=class_nb)
         ax.legend()
 
