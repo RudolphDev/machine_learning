@@ -64,6 +64,7 @@ class LinearSeparationModel(GeneralModel):
             if is_converging:
                 weights = self.__linear_perceptron_two_classes_converge(
                     hyperplan_data)
+                errors = 0
             else:
                 weights, errors = self.__linear_perceptron_two_classes_non_converge(
                     hyperplan_data)
