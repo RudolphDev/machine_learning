@@ -88,6 +88,14 @@ class GeneralModel:
             split_lines.append(line.split())
         return split_lines
 
+    @staticmethod
+    def remove_one_class_from_data(table: list, class_name: str):
+        clean_table = []
+        for line in table:
+            if line[0] != class_name:
+                clean_table.append(line)
+        return clean_table
+
     def print_model_result(self):
         """Print the results of the model prediction for the test data used.
         """
