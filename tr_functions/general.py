@@ -126,6 +126,7 @@ class GeneralModel:
         plt.show()
         
     def plot_test_data(self):
+        plt.rcParams['figure.figsize'] = [8, 8]
         self._add_test_point_to_plot()
         plt.show()
         

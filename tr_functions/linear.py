@@ -25,6 +25,7 @@ class LinearSeparationModel(GeneralModel):
     def epochs(self, nb_epoch: int):
         self.__epochs = nb_epoch
 
+    # Public methods
     def print_model(self):
         for key, val in self.__model.items():
             print("The hyperplan between {} and {} is {}".format(
@@ -53,10 +54,9 @@ class LinearSeparationModel(GeneralModel):
                 weights = self.__linear_perceptron_two_classes_converge(
                     hyperplan_data)
             else:
-                weights = self.__linear_perceptron_two_classes_non_converge(
+                weights, errors = self.__linear_perceptron_two_classes_non_converge(
                     hyperplan_data)
             results[hyper_plan] = weights
-            print("hyperplan {} done.".format(hyper_plan))
         print("Training done")
         print("================================")
         self.__model = results
@@ -68,7 +68,7 @@ class LinearSeparationModel(GeneralModel):
         self._test_data = test_data
         self._conf_matrix = np.zeros(
             (len(self._unique_classes), len(self._unique_classes)))
-        
+
         for line in self._test_data:
             temp_line = [float(val) for val in line]
             predict_classes = []
@@ -82,30 +82,33 @@ class LinearSeparationModel(GeneralModel):
             if self._get_top_n_decision(1, int(line[0]), grouped_classes):
                 self.count_top1 += 1
             if self._get_top_n_decision(2, int(line[0]), grouped_classes):
-                self.count_top2 += 1          
+                self.count_top2 += 1
             self._update_line(line, grouped_classes, "max")
             self._update_confusion_matrix(
                 int(line[0]), grouped_classes, order="max")
 
-    def plot_test_data(self):
-        x = np.linspace(start = -1,  stop = 1, num=10)
+    def plot_linear_data(self):
+        plt.rcParams['figure.figsize'] = [20, 8]
         np_test = np.array(self._test_data)
         plot_count = 1
         for key, value in self.__model.items():
-            plt.subplot(5,2,plot_count)
+            plt.subplot(2, 5, plot_count)
+            full_idx = np.array([])
             for class_nb in key:
-                idx = np.where(np_test[:,0].astype(np.int) == int(class_nb))
-                e_c = []
-                for i in np_test[idx[0],3]:
-                    e_c.append(self._COLORSET[int(i)]) 
-                plt.scatter(x=np_test[idx,1].astype(np.float), y=np_test[idx,2].astype(np.float), edgecolors=self._COLORSET[int(class_nb)], c=e_c, label=class_nb)
+                idx = np.where(np_test[:, 0].astype(np.int) == int(class_nb))
+                full_idx = np.append(full_idx, idx, )
+                plt.scatter(x=np_test[idx, 1].astype(np.float), y=np_test[idx, 2].astype(
+                    np.float), c=self._COLORSET[int(class_nb)], label=class_nb)
             plt.legend()
+            full_idx = np.array(full_idx).astype(np.int)
+            x = np.linspace(start=np.amin(np_test[full_idx, 2].astype(
+                np.float)), stop=np.amax(np_test[full_idx, 2].astype(np.float)), num=10)
             plot_count += 1
-            y_h = (value[0]*x+value[2])/(-value[1])
-            plt.plot(x, y_h, linewidth=2.5)
-            # break  
+            y_h = (value[1]*x+value[2])/(-value[0])
+            plt.plot(y_h, x, linewidth=2.5)
         plt.show()
 
+    # Private methods
     def __create_hyperplans_classes(self):
         self._compute_unique_class_num()
         for i in range(len(self._unique_classes)):
