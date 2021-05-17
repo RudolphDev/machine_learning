@@ -10,12 +10,12 @@ class LinearSeparationModel(GeneralModel):
     def __init__(self):
         self.__one_vs_all = False
         self.__hyperplans = []
-        self.__epochs = 5
+        self.__epochs = 100
         self.__model = {}
         self.__error = []
         GeneralModel.__init__(self)
-        print("Linear Seaparation Model created")
-        print("================================")
+        # print("Linear Seaparation Model created")
+        # print("================================")
 
     # Getter and setter
     @property
@@ -39,7 +39,7 @@ class LinearSeparationModel(GeneralModel):
         print("======================")
 
     def linear_train(self, train_data, is_converging: bool = True, one_vs_all: bool = False):
-        print("Begin linear training")
+        # print("Begin linear training")
         self.__one_vs_all = one_vs_all
         self._train_data = train_data
         if not one_vs_all:
@@ -69,8 +69,8 @@ class LinearSeparationModel(GeneralModel):
                 weights, errors = self.__linear_perceptron_two_classes_non_converge(
                     hyperplan_data)
             results[hyper_plan] = weights
-        print("Training done")
-        print("================================")
+        # print("Training done")
+        # print("================================")
         self.__model = results
         self.__error = errors
         return results
@@ -115,7 +115,7 @@ class LinearSeparationModel(GeneralModel):
             np_test = np.array(self.test_data)
             for key, value in self.__model.items():
                 x = np.linspace(start=np.amin(np_test[:, 2].astype(
-                np.float)), stop=np.amax(np_test[:, 2].astype(np.float)), num=100)
+                np.float)), stop=np.amax(np_test[:, 2].astype(np.float)), num=500)
                 y_h = (value[1]*x+value[2])/(-value[0])
                 max_y = np.amax(np_test[:, 1].astype(np.float))
                 min_y = np.amin(np_test[:, 1].astype(np.float))
