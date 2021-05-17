@@ -5,6 +5,7 @@ from tabulate import tabulate
 from collections import Counter
 import matplotlib.pyplot as plt
 import math
+import copy
 
 
 class GeneralModel:
@@ -34,7 +35,12 @@ class GeneralModel:
         return pd.DataFrame(self._train_data)
 
     @train_data.setter
-    def train_data(self, train_data):
+    def train_data(self, train_data:list):
+        """Set the training data used to train the model.
+
+        Args:
+            train_data (list): nested list containing each line of the training dataset
+        """        
         self._train_data = train_data
     
     @property
@@ -48,27 +54,57 @@ class GeneralModel:
 
     @count_top1.setter
     def count_top1(self, count: int):
+        """set the number of points right labeled
+
+        Args:
+            count (int): numbers of right labeled points
+        """        
         self._count_top1 = count
 
     @property
     def count_top2(self):
+        """return the number of points right labeled in the two best classes
+
+        Returns:
+            int: number of right labeled points in the two best classes
+        """        
         return self._count_top2
 
-    @count_top2.setter
+    @count_top2.setter    
     def count_top2(self, count: int):
+        """set the number of points right labeled in the two best classes
+
+        Args:
+            count (int): number of right labeled points in the two best classes
+        """        
         self._count_top2 = count
 
     @property
     def conf_matrix(self):
+        """return the confusion matrix created from the test dataset
+
+        Returns:
+            list: 2D nested lists of confusion matrix
+        """        
         return self._conf_matrix
 
     @property
     def test_data(self):
+        """return the dataset used to test the model
+
+        Returns:
+            DataFrame: Dataframe containing the dataset used to test the model
+        """        
         return pd.DataFrame(self._test_data)
 
     @test_data.setter
-    def test_data(self, test_data):
-        self._test_data = test_data
+    def test_data(self, test_data:list):
+        """Set the test dataset with a deepcopy keep the original dataset unmodified
+
+        Args:
+            test_data (list): 2D nested lists of testing dataset
+        """        
+        self._test_data = copy.deepcopy(test_data)
     
     # Public methods
     @staticmethod
@@ -90,6 +126,15 @@ class GeneralModel:
 
     @staticmethod
     def remove_one_class_from_data(table: list, class_name: str):
+        """remove on the classe from the given dataset
+
+        Args:
+            table (list): 2D nested lists of the dataset
+            class_name (str): class name deleted
+
+        Returns:
+            list: truncated dataset (line with the given class name removed)
+        """        
         clean_table = []
         for line in table:
             if line[0] != class_name:
@@ -122,6 +167,8 @@ class GeneralModel:
         plt.show()
 
     def plot_all_data(self):
+        """Plot both training and test data
+        """        
         np_train = np.array(self._train_data)
         np_test = np.array(self.test_data)
         fig, ax = plt.subplots()
@@ -134,6 +181,8 @@ class GeneralModel:
         plt.show()
         
     def plot_test_data(self):
+        """Plot testing dataset
+        """        
         plt.rcParams['figure.figsize'] = [8, 8]
         self._add_test_point_to_plot()
         plt.show()
@@ -251,7 +300,14 @@ class GeneralModel:
                 top_n_result = True
         return top_n_result
 
-    def _update_line(self, line, scores_dict, order="max"):
+    def _update_line(self, line:list, scores_dict:dict, order:str="max"):
+        """update the given line by adding the predicted class
+
+        Args:
+            line (list): line wich will be updated
+            scores_dict (dict): dictionary with the score of each class
+            order (str, optional): Indicates if the best score is the max or the min one. Defaults to "max".
+        """        
         if order == "min":
             temp = min(scores_dict.values())
         else:
