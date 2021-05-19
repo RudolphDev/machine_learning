@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 from tr_functions.general import GeneralModel
 from tr_functions.linear import LinearSeparationModel
+from tr_functions.kppv import KppvModel
 
 
 class BaggingModel(GeneralModel):
@@ -44,6 +45,22 @@ class BaggingModel(GeneralModel):
             model = linear.linear_train(bootstrap_train, is_converging=is_converging, one_vs_all=False) 
             linear.test_linear_model(self._test_data, model)
             self.__fill_model_results(linear._test_data)
+        # print("Bagging computing complete")
+        
+    def test_bagging_kppv_model(self, train_data:list, test_data:list, k:int):
+        self._train_data = train_data
+        self.__prepare_model_results(test_data)
+        self._compute_unique_class_num()
+        self._conf_matrix = np.zeros(
+            (len(self._unique_classes), len(self._unique_classes)))
+        kppv = KppvModel()
+        for i in range(self.__nb_models):
+            # print("Boostrap of linear model {} on {}".format(i+1, self.__nb_models))
+            self.test_data = test_data
+            bootstrap_train = random.choices(self._train_data, k=len(self._train_data))
+            kppv.k = k
+            kppv.compute_kppv(bootstrap_train, self._test_data)
+            self.__fill_model_results(kppv._test_data)
         # print("Bagging computing complete")
         
     def compute_bagging_results(self):

@@ -82,7 +82,7 @@ class ParzenModel(GeneralModel):
             dec_data (list): 2D nested list of testing data with class name as first element of the sublist
         """
         self._train_data = app_data
-        self._test_data = dec_data
+        self.test_data = dec_data
         self._compute_unique_class_num()
         self._conf_matrix = np.zeros(
             (len(self._unique_classes), len(self._unique_classes)))

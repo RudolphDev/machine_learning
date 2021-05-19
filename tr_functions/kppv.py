@@ -101,7 +101,7 @@ class KppvModel(GeneralModel):
         self._conf_matrix = np.zeros(
             (len(self._unique_classes), len(self._unique_classes)))
 
-        for line in dec_data:
+        for line in self._test_data:
             kppv_list = self.__get_kppv_list(line[1:])
             k_list = list(Counter(kppv_list[0]).items())
             self.__compute_vote_kppv(k_list, int(line[0]))
