@@ -107,7 +107,7 @@ class LinearSeparationModel(GeneralModel):
         """
         if weighted_hp is None:
             weighted_hp = self.__model
-        self._test_data = test_data.copy()
+        self.test_data = test_data
         self._conf_matrix = np.zeros(
             (len(self._unique_classes), len(self._unique_classes)))
 

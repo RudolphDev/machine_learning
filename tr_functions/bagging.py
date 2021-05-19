@@ -1,5 +1,4 @@
 import random
-import copy
 from collections import Counter
 import numpy as np
 import pandas as pd
@@ -38,11 +37,13 @@ class BaggingModel(GeneralModel):
         linear = LinearSeparationModel()
         for i in range(self.__nb_models):
             # print("Boostrap of linear model {} on {}".format(i+1, self.__nb_models))
-            self._test_data = copy.deepcopy(test_data)
+            self.test_data = test_data
             bootstrap_train = random.choices(self._train_data, k=len(self._train_data))
+            if is_converging == False:
+                linear.epochs = 10
             model = linear.linear_train(bootstrap_train, is_converging=is_converging, one_vs_all=False) 
             linear.test_linear_model(self._test_data, model)
-            self.__fill_model_results()
+            self.__fill_model_results(linear._test_data)
         # print("Bagging computing complete")
         
     def compute_bagging_results(self):
@@ -62,8 +63,8 @@ class BaggingModel(GeneralModel):
         best_n = [0, 0]
         df = pd.DataFrame(app_data)
         shuffled = df.sample(frac=1)
-        cut_dfs = np.array_split(shuffled, self.__cross_val)  
-        for n in range(max_n):
+        cut_dfs = np.array_split(shuffled, self.__cross_val) 
+        for n in range(1,max_n):
             self.__nb_models = n + 1
             sum_error = 0
             for i in range(self.__cross_val):
@@ -93,9 +94,9 @@ class BaggingModel(GeneralModel):
         for i in  range(len(test_data)):
             self.__models_results.append((test_data[i][0], []))
             
-    def __fill_model_results(self):
-        for i in range(len(self._test_data)):
-            self.__models_results[i][1].append(self._test_data[i][3])
+    def __fill_model_results(self, test_data):
+        for i in range(len(test_data)):
+            self.__models_results[i][1].append(test_data[i][3])
             
     def __plot_n_error_rate(self):
         x = [val[0] for val in self.__nb_results_cv]
