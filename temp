@@ -1,0 +1,19 @@
+# Conclusion
+||Dataset 1|Dataset 2|Dataset 3|
+|----|-----|-----|-----|
+|estimation gaussienne (euclidienne)| 99,2% | 94,6% | 72,8% |
+|estimation gaussienne (mahalanobis)| 99,2% | 94,6% | 72,8% |
+|estimation gaussienne (scikit learn)| 99,6% | 95,2% | 71% |
+|1ppv| 99,2% | 92% | 64,6% |
+|kppv (unanimité)| 99,2% | 63,2% | 24,2% |
+|kppv (majorité)| 99,6% | 95% | 71% |
+|kppv (scikit learn)| 99,2% | 94,8% | 71,2% |
+|Parzen (uniform)| 99,2% | 95% | 71,4% |
+|Parzen (gaussienne)| 99,2% | 94,8% | 72,6% |
+|Parzen (scikit learn)| 99,4% | 94,6% | 68,6% |
+|Spéaration linéaire (one vs one)| 99,4% | 81,4% | 55,2% |
+|Spéaration linéaire (one vs all)| 84,2% | 67%% | 72,6% |
+|Spéaration linéaire (scikit learn)| 99,4% | 93,4% | 71,2% |
+|Bagging (séparation linéaire)| 99,4% | 81,4% | 55,2% |
+|Bagging (kppv)| 84,2% | 67%% | 72,6% |
+|Bagging (scikit learn)| 99,4% | 93,4% | 71,2% |

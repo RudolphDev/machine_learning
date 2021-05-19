@@ -248,6 +248,7 @@ class KppvModel(GeneralModel):
     def __plot_k_error_rate(self):
         """plot the error rate of each k tested in the cross validation
         """
+        plt.rcParams['figure.figsize'] = [8, 8]
         x = [val[0] for val in self.__k_results_cv]
         y = [1-val[1] for val in self.__k_results_cv]
         plt.plot(x, y)

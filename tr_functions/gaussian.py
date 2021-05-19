@@ -92,7 +92,7 @@ class GaussianModel(GeneralModel):
         self.test_data = dec_data
         self._conf_matrix = np.zeros(
             (len(self._unique_classes), len(self._unique_classes)))
-        for line in dec_data:
+        for line in self._test_data:
             if self._compute_method == "mahalanobis":
                 dists = self.__compute_mahalanobis_dists(line)
             else:
