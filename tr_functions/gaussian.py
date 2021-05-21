@@ -6,7 +6,7 @@ from scipy import linalg
 import matplotlib.pyplot as plt
 
 # local functions import
-from tr_functions.general import GeneralModel
+from .general import GeneralModel
 
 
 class GaussianModel(GeneralModel):

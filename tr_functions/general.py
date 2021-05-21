@@ -2,7 +2,6 @@
 import numpy as np
 import pandas as pd
 from tabulate import tabulate
-from collections import Counter
 import matplotlib.pyplot as plt
 import math
 import copy
